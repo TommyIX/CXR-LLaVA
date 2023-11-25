@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+import open_clip
+
 from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
 
 
@@ -20,11 +22,26 @@ class CLIPVisionTower(nn.Module):
             self.cfg_only = CLIPVisionConfig.from_pretrained(self.vision_tower_name)
 
     def load_model(self):
-        self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
-        self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name)
-        self.vision_tower.requires_grad_(False)
+        if "BiomedCLIP" in self.vision_tower_name:
+            print("====loading BMCLIP=====")
+            self.image_processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-large-patch14-336")
+            self.vision_tower = CLIPVisionModel.from_pretrained("openai/clip-vit-large-patch14-336")
 
-        self.is_loaded = True
+            model, _, _ = open_clip.create_model_and_transforms('hf-hub:microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224')
+            self.vision_tower = model.visual.trunk
+            self.vision_tower.to(torch.float16)
+
+            self.vision_tower.requires_grad_(False)
+
+            self.is_loaded = True
+            print("====Finished=====")
+        else:
+            print("====NOT loading BMCLIP=====")
+            self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
+            self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name)
+            self.vision_tower.requires_grad_(False)
+
+            self.is_loaded = True
 
     def feature_select(self, image_forward_outs):
         image_features = image_forward_outs.hidden_states[self.select_layer]

@@ -33,6 +33,8 @@ def eval_model(args):
     model_name = get_model_name_from_path(model_path)
     tokenizer, model, image_processor, context_len = load_pretrained_model(model_path, args.model_base, model_name)
 
+    print(model.device)
+
     questions = json.load(open(os.path.expanduser(args.question_file), "r"))
     questions = get_chunk(questions, args.num_chunks, args.chunk_idx)
     answers_file = os.path.expanduser(args.answers_file)
@@ -79,6 +81,7 @@ def eval_model(args):
                 do_sample=True if args.temperature > 0 else False,
                 temperature=args.temperature,
                 max_new_tokens=1024,
+                # max_length=64,
                 use_cache=True,
                 stopping_criteria=stopping_criteria,
             )
@@ -104,7 +107,8 @@ def eval_model(args):
                     images=images,
                     do_sample=True if args.temperature > 0 else False,
                     temperature=args.temperature,
-                    max_new_tokens=64,
+                    max_new_tokens=128,
+                    # max_length=64,
                     use_cache=True,
                     stopping_criteria=[stopping_criteria])
 

@@ -90,7 +90,8 @@ def eval_model(args):
 
     for (input_ids, image_tensor), line in tqdm(zip(data_loader, questions), total=len(questions)):
         idx = line["question_id"]
-        cur_prompt = line["text"]
+        # cur_prompt = line["text"]
+        cur_prompt = "Describe with a short sentence"
 
         stop_str = conv_templates[args.conv_mode].sep if conv_templates[args.conv_mode].sep_style != SeparatorStyle.TWO else conv_templates[args.conv_mode].sep2
         input_ids = input_ids.to(device='cuda', non_blocking=True)
@@ -103,8 +104,7 @@ def eval_model(args):
                 temperature=args.temperature,
                 top_p=args.top_p,
                 num_beams=args.num_beams,
-                max_new_tokens=128,
-                # max_length=64,
+                max_new_tokens=32,
                 use_cache=True)
 
         input_token_len = input_ids.shape[1]
