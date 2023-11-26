@@ -7,12 +7,12 @@ import numpy as np
 import tqdm
 from PIL import Image
 import os
-from llava.model.builder import load_pretrained_model
-from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
-from llava.conversation import conv_templates, SeparatorStyle 
-from llava.utils import disable_torch_init
-from llava.mm_utils import tokenizer_image_token, get_model_name_from_path, KeywordsStoppingCriteria
-from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+from ..llava.model.builder import load_pretrained_model
+from ..llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
+from ..llava.conversation import conv_templates, SeparatorStyle 
+from ..llava.utils import disable_torch_init
+from ..llava.mm_utils import tokenizer_image_token, get_model_name_from_path, KeywordsStoppingCriteria
+from ..llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 
 
 
@@ -50,7 +50,7 @@ def calculate_metrics(model,
                       image_processor,
                       dataset,
                       question="Describe the given chest x-ray image in detail.",
-                      answer_path="/lustre/home/yongxin.wang/workspace/LLaVA/playground/data/eval/mimic-lite"):
+                      answer_path="./eval/answer"):
     
     pred = []
     dataloader = Dataloader(dataset, batch_size=1, collate_fn=lambda batch: {key: [dict[key] for dict in batch] for key in batch[0]})
@@ -97,7 +97,7 @@ def calculate_metrics(model,
 
 if __name__ == '__main__':
     eval_dataset = sample_dataset("mimic")
-    model_path = '/lustre/home/jinhong.wang/MLM/checkpoints/llava1.5-MLM7b-ft/ '
+    model_path = '../checkpoints/llava1.5-MLM7b-ft/ '
     tokenizer, model, image_processor, context_len = load_pretrained_model(
             model_path=model_path,
             model_base=None,

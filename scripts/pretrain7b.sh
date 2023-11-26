@@ -1,9 +1,9 @@
 deepspeed llava/train/train_mem.py \
     --deepspeed scripts/zero2.json \
-    --model_name_or_path ./pretweight/llama2_7b_hfweight \
+    --model_name_or_path meta-llama/Llama-2-7b \
     --version plain \
     --data_path data/mimic-lite/mimic_ft_llava.json \
-    --image_folder data/mimic-lite/images  \
+    --image_folder data/images  \
     --vision_tower openai/clip-vit-large-patch14-336 \
     --mm_projector_type mlp2x_gelu \
     --tune_mm_mlp_adapter True \
